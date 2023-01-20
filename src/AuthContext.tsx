@@ -25,12 +25,13 @@ export const AuthContext = createContext<IAuthContext>({
 })
 
 export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
-  const [refreshToken, setRefreshToken] = useLocalStorage<string | undefined>('ROCP_refreshToken', undefined)
+  const { initialAccessToken, initialRefreshToken = '' } = authConfig
+  const [refreshToken, setRefreshToken] = useLocalStorage<string | undefined>('ROCP_refreshToken', initialAccessToken)
   const [refreshTokenExpire, setRefreshTokenExpire] = useLocalStorage<number>(
     'ROCP_refreshTokenExpire',
     epochAtSecondsFromNow(2 * FALLBACK_EXPIRE_TIME)
   )
-  const [token, setToken] = useLocalStorage<string>('ROCP_token', '')
+  const [token, setToken] = useLocalStorage<string>('ROCP_token', initialRefreshToken)
   const [tokenExpire, setTokenExpire] = useLocalStorage<number>(
     'ROCP_tokenExpire',
     epochAtSecondsFromNow(FALLBACK_EXPIRE_TIME)
@@ -51,6 +52,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
     preLogin = () => null,
     postLogin = () => null,
     onRefreshTokenExpire = undefined,
+    onTokenResponse = undefined,
   } = authConfig
 
   const config: TInternalConfig = {
@@ -88,6 +90,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   }
 
   function handleTokenResponse(response: TTokenResponse) {
+    if (onTokenResponse) {
+      onTokenResponse(response)
+    }
     setToken(response.access_token)
     setRefreshToken(response.refresh_token)
     setTokenExpire(epochAtSecondsFromNow(response.expires_in ?? FALLBACK_EXPIRE_TIME))
