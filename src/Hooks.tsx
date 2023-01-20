@@ -10,7 +10,10 @@ function useBrowserStorage<T>(
   key = `${prefix ?? ''}${key}`
 
   const [storedValue, setStoredValue] = useState<T>(() => {
-    const item = storage.getItem(key)
+    if (typeof window === 'undefined') {
+      return initialValue
+    }
+    const item = localStorage.getItem(key)
     try {
       return item ? JSON.parse(item) : initialValue
     } catch (error: any) {
@@ -22,11 +25,13 @@ function useBrowserStorage<T>(
   })
 
   const setValue = (value: T | ((val: T) => T)): void => {
+    if (typeof window === 'undefined') {
+      return
+    }
     if (value === undefined) {
       // Delete item if set to undefined. This avoids warning on loading invalid json
       setStoredValue(value)
       storage.removeItem(key)
-      return
     }
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value
