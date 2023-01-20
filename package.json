@@ -1,6 +1,7 @@
 {
-  "name": "package-development",
+  "name": "react-oauth2-code-pkce",
   "version": "0.1.0",
+  "main": "src/dist/index.js",
   "dependencies": {
     "react": ">=18.2.0",
     "react-dom": ">=18.2.0",
