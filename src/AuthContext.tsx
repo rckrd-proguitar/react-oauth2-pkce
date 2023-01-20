@@ -24,10 +24,11 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   const config: TInternalConfig = useMemo(() => createInternalConfig(authConfig), [authConfig])
+  const { initialAccessToken = '', initialRefreshToken = '', onTokenResponse } = authConfig;
 
   const [refreshToken, setRefreshToken] = useBrowserStorage<string | undefined>(
     'refreshToken',
-    undefined,
+    initialRefreshToken,
     config.storage,
     config.storageKeyPrefix
   )
@@ -37,7 +38,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
     config.storage,
     config.storageKeyPrefix
   )
-  const [token, setToken] = useBrowserStorage<string>('token', '', config.storage, config.storageKeyPrefix)
+  const [token, setToken] = useBrowserStorage<string>('token', initialAccessToken, config.storage, config.storageKeyPrefix)
   const [tokenExpire, setTokenExpire] = useBrowserStorage<number>(
     'tokenExpire',
     epochAtSecondsFromNow(FALLBACK_EXPIRE_TIME),
@@ -102,6 +103,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   }
 
   function handleTokenResponse(response: TTokenResponse) {
+    if (onTokenResponse) {
+      onTokenResponse(response)
+    }
     setToken(response.access_token)
     setRefreshToken(response.refresh_token)
     const tokenExpiresIn = config.tokenExpiresIn ?? response.expires_in ?? FALLBACK_EXPIRE_TIME
@@ -198,7 +202,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
           'Bad authorization state. Refreshing the page and log in again might solve the issue.'
         console.error(
           error_description +
-            "\nExpected  to find a '?code=' parameter in the URL by now. Did the authentication get aborted or interrupted?"
+          "\nExpected  to find a '?code=' parameter in the URL by now. Did the authentication get aborted or interrupted?"
         )
         setError(error_description)
         clearStorage()

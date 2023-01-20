@@ -51,6 +51,8 @@ export interface IAuthContext {
 
 // Input from users of the package, some optional values
 export type TAuthConfig = {
+  initialAccessToken?: string
+  initialRefreshToken?: string
   clientId: string
   authorizationEndpoint: string
   tokenEndpoint: string
@@ -62,6 +64,7 @@ export type TAuthConfig = {
   preLogin?: () => void
   postLogin?: () => void
   onRefreshTokenExpire?: (event: TRefreshTokenExpiredEvent) => void
+  onTokenResponse?: (tokenResponse: TTokenResponse) => void
   decodeToken?: boolean
   autoLogin?: boolean
   clearURL?: boolean
