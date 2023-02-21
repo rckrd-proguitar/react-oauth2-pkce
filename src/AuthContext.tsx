@@ -24,7 +24,7 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   const config: TInternalConfig = useMemo(() => createInternalConfig(authConfig), [authConfig])
-  const { initialAccessToken = '', initialRefreshToken = '', onTokenResponse } = authConfig;
+  const { initialAccessToken = '', initialRefreshToken = '', onTokenResponse, onClearStorage } = authConfig;
 
   const [refreshToken, setRefreshToken] = useBrowserStorage<string | undefined>(
     'refreshToken',
@@ -70,6 +70,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   let interval: any
 
   function clearStorage() {
+    if (onClearStorage) {
+      onClearStorage()
+    }
     setRefreshToken(undefined)
     setToken('')
     setTokenExpire(epochAtSecondsFromNow(FALLBACK_EXPIRE_TIME))
