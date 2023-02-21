@@ -63,6 +63,7 @@ export type TAuthConfig = {
   postLogin?: () => void
   onRefreshTokenExpire?: (event: TRefreshTokenExpiredEvent) => void
   onTokenResponse?: (tokenResponse: TTokenResponse) => void
+  onClearStorage?: () => void
   decodeToken?: boolean
   autoLogin?: boolean
   // TODO: Remove in 2.0

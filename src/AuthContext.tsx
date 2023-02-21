@@ -53,6 +53,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
     postLogin = () => null,
     onRefreshTokenExpire = undefined,
     onTokenResponse = undefined,
+    onClearStorage = undefined,
   } = authConfig
 
   const config: TInternalConfig = {
@@ -68,6 +69,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   validateAuthConfig(config)
 
   function clearStorage() {
+    if (onClearStorage) {
+      onClearStorage()
+    }
     setRefreshToken(undefined)
     setToken('')
     setTokenExpire(epochAtSecondsFromNow(FALLBACK_EXPIRE_TIME))
