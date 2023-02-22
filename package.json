@@ -1,6 +1,6 @@
 {
   "name": "react-oauth2-code-pkce",
-  "version": "0.1.0",
+  "version": "0.0.3-pre-alpha",
   "main": "src/dist/index.js",
   "files": [
     "src/dist"
