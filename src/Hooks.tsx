@@ -6,14 +6,16 @@ function useBrowserStorage<T>(
   type: 'session' | 'local',
   prefix?: string
 ): [T, (v: T) => void] {
+  
+  if (typeof window === 'undefined') {
+    return [initialValue, () => {}];
+  }
+
   const storage = type === 'session' ? sessionStorage : localStorage
   key = `${prefix ?? ''}${key}`
 
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialValue
-    }
-    const item = localStorage.getItem(key)
+    const item = storage.getItem(key)
     try {
       return item ? JSON.parse(item) : initialValue
     } catch (error) {
