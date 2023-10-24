@@ -1,6 +1,6 @@
 {
   "name": "react-oauth2-code-pkce",
-  "version": "0.0.3-pre-alpha",
+  "version": "0.0.4-pre-alpha",
   "main": "src/dist/index.js",
   "files": [
     "src/dist"
@@ -14,7 +14,8 @@
     "start": "ESLINT_NO_DEV_ERRORS='true' react-scripts start",
     "build": "react-scripts build",
     "test": "jest --silent",
-    "test:watch": "jest --silent --watch"
+    "test:watch": "jest --silent --watch",
+    "postinstall": "tsc"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",

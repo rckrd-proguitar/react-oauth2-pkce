@@ -216,7 +216,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
         didFetchTokens.current = true
         try {
           validateState(urlParams)
-        } catch (e: any) {
+        } catch (e) {
           console.error(e)
           setError((e as Error).message)
         }
