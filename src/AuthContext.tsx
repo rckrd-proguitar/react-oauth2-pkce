@@ -68,6 +68,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   const [error, setError] = useState<string | null>(null)
 
   let interval: any
+  let loginRedirectUri: string | undefined;
 
   function clearStorage() {
     if (onClearStorage) {
@@ -98,6 +99,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
       console.warn(`Passed login state must be of type 'string'. Received '${state}'. Ignoring value...`)
       typeSafePassedState = undefined
     }
+    loginRedirectUri = redirectUri;
     redirectToLogin({ ...config, redirectUri: redirectUri || config.redirectUri }, typeSafePassedState).catch((error) => {
       console.error(error)
       setError(error.message)
@@ -221,7 +223,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
           setError((e as Error).message)
         }
         // Request tokens from auth server with the auth code
-        fetchTokens(config)
+        fetchTokens({ ...config, redirectUri: loginRedirectUri || config.redirectUri })
           .then((tokens: TTokenResponse) => {
             handleTokenResponse(tokens)
             // Call any postLogin function in authConfig
@@ -236,6 +238,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
               // Clear ugly url params
               window.history.replaceState(null, '', window.location.pathname)
             }
+            loginRedirectUri = undefined;
             setLoginInProgress(false)
           })
       }
