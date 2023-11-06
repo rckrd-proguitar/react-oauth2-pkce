@@ -38,10 +38,15 @@ export interface IAuthProvider {
   children: ReactNode
 }
 
+type LoginConfig = {
+  redirectUri?: string
+  cleanUrl?: boolean
+}
+
 export interface IAuthContext {
   token: string
   logOut: (state?: string, logoutHint?: string) => void
-  login: (state?: string, redirectUri?: string) => void
+  login: (state?: string, loginConfig?: LoginConfig) => void
   error: string | null
   tokenData?: TTokenData
   idToken?: string

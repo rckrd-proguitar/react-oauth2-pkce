@@ -71,6 +71,13 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
     config.storageKeyPrefix
   )
 
+  const [cleanUrl, setCleanUrl] = useBrowserStorage<boolean>(
+    'cleanUrl',
+    true,
+    config.storage,
+    config.storageKeyPrefix
+  )
+
 
   const [tokenData, setTokenData] = useState<TTokenData | undefined>()
   const [idTokenData, setIdTokenData] = useState<TTokenData | undefined>()
@@ -102,7 +109,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
     if (config?.logoutEndpoint && token) redirectToLogout(config, token, refreshToken, idToken, state, logoutHint)
   }
 
-  function login(state?: string, redirectUri?: string) {
+  function login(state?: string, { redirectUri, cleanUrl }: { redirectUri?: string, cleanUrl?: boolean } = {}) {
     clearStorage()
     setLoginInProgress(true)
     // TODO: Raise error on wrong state type in v2
@@ -112,6 +119,7 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
       typeSafePassedState = undefined
     }
     setLoginRedirectUri(redirectUri);
+    setCleanUrl(cleanUrl || true);
     redirectToLogin(configWithRedirectUri(redirectUri), typeSafePassedState).catch((error) => {
       console.error(error)
       setError(error.message)
@@ -246,10 +254,11 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
             setError(error.message)
           })
           .finally(() => {
-            if (config.clearURL) {
+            if (cleanUrl && config.clearURL) {
               // Clear ugly url params
               window.history.replaceState(null, '', window.location.pathname)
             }
+            setCleanUrl(true);
             setLoginRedirectUri(undefined);
             setLoginInProgress(false)
           })
