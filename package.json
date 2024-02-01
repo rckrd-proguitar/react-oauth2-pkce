@@ -1,6 +1,10 @@
 {
   "name": "package-development",
   "version": "0.1.0",
+  "main": "src/dist/index.js",
+  "files": [
+    "src/dist"
+  ],
   "dependencies": {
     "react": ">=18.2.0",
     "react-dom": ">=18.2.0",
@@ -10,8 +14,7 @@
     "start": "ESLINT_NO_DEV_ERRORS='true' react-scripts start",
     "build": "react-scripts build",
     "test": "jest --silent",
-    "test:watch": "jest --silent --watch",
-    "postinstall": "rm -rf src/dist 2> /dev/null && tsc"
+    "test:watch": "jest --silent --watch"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
