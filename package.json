@@ -10,7 +10,8 @@
     "start": "ESLINT_NO_DEV_ERRORS='true' react-scripts start",
     "build": "react-scripts build",
     "test": "jest --silent",
-    "test:watch": "jest --silent --watch"
+    "test:watch": "jest --silent --watch",
+    "postinstall": "rm -rf src/dist 2> /dev/null && tsc"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",

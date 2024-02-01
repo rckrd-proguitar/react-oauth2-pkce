@@ -3,6 +3,7 @@ import useBrowserStorage from './Hooks'
 import {
   IAuthContext,
   IAuthProvider,
+  TAuthConfig,
   TInternalConfig,
   TRefreshTokenExpiredEvent,
   TTokenData,
@@ -24,7 +25,7 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   const config: TInternalConfig = useMemo(() => createInternalConfig(authConfig), [authConfig])
-
+  const { onTokenResponse, onClearStorage } = config as TAuthConfig;
   const [refreshToken, setRefreshToken] = useBrowserStorage<string | undefined>(
     `${config.storageKeyPrefix}refreshToken`,
     undefined,
@@ -61,6 +62,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   const [error, setError] = useState<string | null>(null)
 
   function clearStorage() {
+    if(onClearStorage){
+      onClearStorage();
+    }
     setRefreshToken(undefined)
     setToken('')
     setTokenExpire(epochAtSecondsFromNow(FALLBACK_EXPIRE_TIME))
@@ -94,6 +98,9 @@ export const AuthProvider = ({ authConfig, children }: IAuthProvider) => {
   }
 
   function handleTokenResponse(response: TTokenResponse) {
+    if(onTokenResponse){
+      onTokenResponse(response);
+    }
     setToken(response.access_token)
     setRefreshToken(response.refresh_token)
     const tokenExpiresIn = config.tokenExpiresIn ?? response.expires_in ?? FALLBACK_EXPIRE_TIME
